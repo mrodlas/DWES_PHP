@@ -12,7 +12,7 @@ function write_copyright_notice(){
 <html>
     <head>
         <title>Basic Functions</title>
-        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="../css/styles.css">
     </head>
     <body>
         <header>
