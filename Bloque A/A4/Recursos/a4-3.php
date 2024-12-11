@@ -37,10 +37,9 @@ class Account {
         return $this->owner;
     }
 
-    public function setOwner(string $owner): string
+    public function setOwner(string $owner)
     {
         $this->owner = $owner;
-        return $this->owner;
     }
 }
 
@@ -51,5 +50,6 @@ $account = new Account(34567890, 'Savings', 90.00);
 <h2><?= $account->type ?> Account</h2>
 <p>Previous balance: $<?= $account->getBalance() ?></p>
 <p>New balance: $<?= $account->deposit(35.00) ?></p>
-<p>Owner: <?= $account->setOwner('Maria') ?></p>
+<?= $account->setOwner('Maria') ?>
+<p>Owner: <?= $account->getOwner()?></p>
 <?php include 'includes/footer.php'; ?>
