@@ -1,0 +1,5 @@
+¿Qué tipo de problemas podría originar un ataque XSS para los usuarios? 
+    Puede comprometer los datos personales de los usuarios.
+
+¿Y para el sitio web?
+    Puede comprometer la seguridad del sitios web. Y quedar completamente inseguro.
