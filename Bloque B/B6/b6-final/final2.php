@@ -1,34 +1,25 @@
+
 <?php
-// Array para crear el usuario
+// Definir arrays para el usuario, errores y datos procesados
 $usuario = [
     'nombre' => '',
     'correo' => '',
     'telefono' => '',
     'evento' => '',
-    'terminos' => '',
+    'terminos' => ''
 ];
-
-// Array para crear los errores
-$errores = [
+$error = [
     'nombre' => '',
     'correo' => '',
     'telefono' => '',
     'evento' => '',
-    'terminos' => '',
+    'terminos' => ''
 ];
+$datos = [];
 
-// Array para crear los mensajes
-$mensajes = [
-    'nombre' => '',
-    'correo' => '',
-    'telefono' => '',
-    'evento' => '',
-    'terminos' => '',
-];
-
-// Si el método es POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Filtros para validar los datos
+// Procesar el formulario
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Configurar filtros
     $filtros = [
         'nombre' => [
             'filter' => FILTER_VALIDATE_REGEXP,
@@ -37,35 +28,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'correo' => FILTER_VALIDATE_EMAIL,
         'telefono' => [
             'filter' => FILTER_VALIDATE_REGEXP,
-            'options' => ['regexp' => '/^[0-9]{9,}$/']  
+            'options' => ['regexp' => '/^[0-9]{9,}$/']
         ],
-        'evento' => FILTER_SANITIZE_STRING,
-        'terminos' => FILTER_VALIDATE_BOOLEAN,
+        'evento' => [
+            'filter' => FILTER_VALIDATE_REGEXP,
+            'options' => ['regexp' => '/^(Presencial|Online)$/']
+        ],
+        'terminos' => [
+            'filter' => FILTER_VALIDATE_BOOLEAN,
+            'flags' => FILTER_NULL_ON_FAILURE
+        ]
     ];
 
-    // Filtrar los datos
+    // Validar las entradas
     $usuario = filter_input_array(INPUT_POST, $filtros);
 
-    // Crear los errores
-    $errores['nombre'] = $usuario['nombre'] ? '' : 'Debe escribir un nombre válido.';
-    $errores['correo'] = $usuario['correo'] ? '' : 'El correo no es válido.';
-    $errores['telefono'] = $usuario['telefono'] ? '' : 'El teléfono no es válido.';
-    $errores['evento'] = !empty($usuario['evento']) ? '' : 'Debe seleccionar un tipo de evento.';
-    $errores['terminos'] = $usuario['terminos'] ? '' : 'Debe aceptar los términos y condiciones.';
+    // Evaluar los resultados de validación
+    $error['nombre'] = $usuario['nombre'] ? '' : 'ERROR: Nombre debe tener solo letras y entre 2 y 50 caracteres.';
+    $error['correo'] = $usuario['correo'] ? '' : 'ERROR: Correo debe ser una dirección válida.';
+    $error['telefono'] = $usuario['telefono'] ? '' : 'ERROR: El teléfono debe tener al menos 9 dígitos.';
+    $error['evento'] = $usuario['evento'] ? '' : 'ERROR: Seleccione "Presencial" u "Online".';
+    $error['terminos'] = $usuario['terminos'] ? '' : 'ERROR: Debe aceptar los términos y condiciones.';
 
-    // Verificar si hay errores
-    $invalid = implode('', $errores);
+    // Mostrar mensaje de éxito o errores
+    $invalid = implode('', $error);
+    $sms = $invalid ? 'Corrige los errores que se muestran en pantalla.' : 'Registro completado correctamente.';
 
+    // Sanear datos
     if (!$invalid) {
-        // Si no hay errores, mostrar mensajes de éxito
-        $mensajes['nombre'] = 'Datos correctos.';
-        $mensajes['correo'] = 'Datos correctos.';
-        $mensajes['telefono'] = 'Datos correctos.';
-        $mensajes['evento'] = 'Datos correctos.';
-        $mensajes['terminos'] = 'Datos correctos.';
+        $datos['nombre'] = filter_var($usuario['nombre'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $datos['correo'] = filter_var($usuario['correo'], FILTER_SANITIZE_EMAIL);
+        $datos['telefono'] = filter_var($usuario['telefono'], FILTER_SANITIZE_NUMBER_INT);
+        $datos['evento'] = $usuario['evento']; // No necesita sanitización porque está validado
+        // Aquí se enviarían los datos a la base de datos
     }
 }
 ?>
+
 <?php include 'includes/header.php'; ?>
 <h1>Formulario de registro para eventos</h1>
 
@@ -98,9 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="submit" value="Registrar">
 </form>
 
-<?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$invalid) { ?>
-    <h2>Resultados:</h2>
-    <pre><?php var_dump($usuario); ?></pre>
-<?php } ?>
+ <!-- Mostrar resultados -->
+ <?php if ($_SERVER['REQUEST_METHOD'] === 'POST') { ?>
+        <div class="result <?= $invalid ? 'error' : 'success' ?>">
+            <h3><?= htmlspecialchars($sms) ?></h3>
+        </div>
+    <?php } ?>
 
 <?php include 'includes/footer.php'; ?>

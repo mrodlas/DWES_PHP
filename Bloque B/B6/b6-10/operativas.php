@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include 'includes/header.php'; ?>
 
 <?= $mensaje ?>
-<form action="09_optativas.php" method="POST">
+<form action="optativas.php" method="POST">
     <p>Nombre: <input type="text" name="nombre"></p>
     <p>Apellido: <input type="text" name="apellido"></p>
     Seleccione una asignatura optativa:
