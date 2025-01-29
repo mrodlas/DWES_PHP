@@ -5,7 +5,7 @@ if($_SERVER['REQUEST_METHOD']== 'POST'){
     if($_FILES['image']['error'] === 0){
         // Guardar el sitio temporal 
         $temporal = $_FILES['image']['tmp_name'];
-        $ruta = './var/image/' . $_FILES['image']['name'];
+        $ruta = './var/www/images/' . $_FILES['image']['name'];
 
         // Si todo funciona movemos la imagen a ese sitio 
         $mover = move_uploaded_file($temporal, $ruta);
