@@ -41,11 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // If sent +
     }
 }
 ?>
-<?php include 'includes/header.php' ?>
+<?php include '../includes/header.php' ?>
 <?= $message ?>
 <form method="POST" action="EJ3.php" enctype="multipart/form-data">
   <label for="image"><b>Upload file:</b></label>
   <input type="file" name="image" accept="image/jpeg" id="image"><br>
   <input type="submit" value="upload">
 </form>
-<?php include 'includes/footer.php' ?>
+<?php include '../includes/footer.php' ?>
